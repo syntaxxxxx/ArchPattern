@@ -21,7 +21,6 @@ interface ImagesContract {
         fun selectPhotosView()
         fun onShowPhotosPreview(file: File)
         fun onShowDialogSelectedPhotos()
-        fun onShowErrorDialog()
         fun getRealPathFromUri(uri: Uri): String
         fun newFile(): File?
         fun getFilePath() : File?

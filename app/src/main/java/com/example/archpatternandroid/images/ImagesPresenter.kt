@@ -3,9 +3,10 @@ package com.example.archpatternandroid.images
 import java.io.File
 
 class ImagesPresenter(
-    var selectedFile : String,
     var photosView: ImagesContract.View)
     : ImagesContract.Presenter{
+
+    var selectedFile : String? = null
 
     /**
      * ambil gambar dan cek permission
@@ -23,7 +24,7 @@ class ImagesPresenter(
             photosView.onShowErrorDialog()
             return
         }
-        photosView.takePhotosView()
+        photosView.takePhotosView(file)
     }
 
     /**
@@ -49,6 +50,6 @@ class ImagesPresenter(
 
     // get photos
     override fun getPhotos(): String {
-        return selectedFile
+        return selectedFile!!
     }
 }
