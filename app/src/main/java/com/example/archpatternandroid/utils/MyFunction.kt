@@ -12,6 +12,7 @@ import java.io.File
 
 class MyFunction {
 
+    // images
     fun displayImagePreview(ctx: Context, iv: ImageView, file: File) {
         Glide.with(ctx).load(file)
             .apply(RequestOptions().centerCrop().circleCrop()
