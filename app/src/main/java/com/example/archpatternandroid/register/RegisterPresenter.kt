@@ -1,5 +1,6 @@
 package com.example.archpatternandroid.register
 
+import android.util.Log
 import com.example.archpatternandroid.base.BasePresenter
 import com.example.archpatternandroid.entity.ResponseRegister
 import com.example.archpatternandroid.repository.RegisterRepositoryImpl
@@ -26,7 +27,12 @@ class RegisterPresenter(val repo: RegisterRepositoryImpl, var regisView: Registe
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
 
+            // SAMPAIKAN DATA KOSONG KE VIEW
+            regisView?.isEmpty()
+
         } else {
+
+            // KITA REQUEST KE SERVER
             val reqName: RequestBody = createPartFromString(name)
             val reqEmail: RequestBody = createPartFromString(email)
             val reqPass: RequestBody = createPartFromString(password)
@@ -40,6 +46,15 @@ class RegisterPresenter(val repo: RegisterRepositoryImpl, var regisView: Registe
             ).enqueue(object : Callback<ResponseRegister> {
 
                 override fun onResponse(call: Call<ResponseRegister>, response: Response<ResponseRegister>) {
+
+                    if (response.isSuccessful && response != null) {
+                        val isSuccess = response.body()?.isSuccess
+                        val message = response.body()?.msg
+
+                        if (isSuccess == true) {
+                            Log.d("TAG", message)
+                        }
+                    }
                 }
 
                 override fun onFailure(call: Call<ResponseRegister>, t: Throwable) {

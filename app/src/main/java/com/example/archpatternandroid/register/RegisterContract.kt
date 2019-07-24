@@ -9,6 +9,6 @@ interface RegisterContract {
     }
 
     interface View : BaseView {
-
+        fun isEmpty()
     }
 }

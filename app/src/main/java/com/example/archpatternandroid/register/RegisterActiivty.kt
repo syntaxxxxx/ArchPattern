@@ -35,7 +35,12 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContract.View, View.OnClickListener {
+class RegisterActiivty : AppCompatActivity(),
+    ImagesContract.View, RegisterContract.View, View.OnClickListener {
+
+    override fun isEmpty() {
+        toast("ga boleh kosong")
+    }
 
     lateinit var imagesPresenter: ImagesPresenter
     lateinit var presenter: RegisterPresenter
@@ -77,6 +82,7 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
                 level = "User"
             }
             R.id.btn_register -> {
+                presenter.regis(name, email, password, level, imagesPresenter.getPhotos())
             }
             R.id.tv_login -> {
                 startActivity<LoginActivity>()
