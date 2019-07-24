@@ -11,7 +11,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -36,7 +35,7 @@ import java.io.IOException
 import java.util.*
 
 class RegisterActiivty : AppCompatActivity(),
-    ImagesContract.View, RegisterContract.View, View.OnClickListener {
+    ImagesContract.View, RegisterContract.View {
 
     override fun isEmpty() {
         toast("ga boleh kosong")
@@ -67,32 +66,19 @@ class RegisterActiivty : AppCompatActivity(),
         initPresenter()
         initCompressImages()
         initRb()
-        iv_profile.setOnClickListener(this)
-    }
 
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.iv_profile -> {
-                onShowDialogSelectedPhotos()
-            }
-            R.id.rb_admin -> {
-                level = "Admin"
-            }
-            R.id.rb_user -> {
-                level = "User"
-            }
-            R.id.btn_register -> {
-                presenter.regis(name, email, password, level, imagesPresenter.getPhotos())
-            }
-            R.id.tv_login -> {
-                startActivity<LoginActivity>()
-            }
+        iv_profile.setOnClickListener { onShowDialogSelectedPhotos() }
+        rb_admin.setOnClickListener { level = "Admin" }
+        rb_user.setOnClickListener { level = "User" }
+        btn_register.setOnClickListener {
+            presenter.regis(name, email, password, level, imagesPresenter.getPhotos())
         }
+        tv_login.setOnClickListener { startActivity<LoginActivity>() }
     }
 
     private fun initPresenter() {
         val service = Injection.provideApiService()
-        val repository =  RegisterRepositoryImpl(service)
+        val repository = RegisterRepositoryImpl(service)
         presenter = RegisterPresenter(repository)
         imagesPresenter = ImagesPresenter(this)
     }
@@ -236,7 +222,7 @@ class RegisterActiivty : AppCompatActivity(),
     }
 
     override fun onShowPhotosPreview(file: File) {
-       displayPhotosPreview(this, iv_profile, file)
+        displayPhotosPreview(this, iv_profile, file)
     }
 
     override fun onShowErrorDialog() {
