@@ -3,6 +3,7 @@ package com.example.archpatternandroid.register
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.example.archpatternandroid.BuildConfig
 import com.example.archpatternandroid.R
@@ -50,6 +52,8 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
         const val REQUEST_CAMERA = 0
         const val REQUEST_GALLERY = 1
     }
+
+    val allPermission = arrayOf<String>(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,6 +167,15 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
         val uri = Uri.fromParts("package", packageName, null)
         intent.data = uri
         startActivityForResult(intent, 101)
+    }
+
+
+    override fun checkSelfPermission(): Boolean {
+        for (permission in allPermission) {
+            val result = ActivityCompat.checkSelfPermission(this, permission)
+            if (result == PackageManager.PERMISSION_DENIED) return false
+        }
+        return true
     }
 
     override fun takePhotosView(file: File?) {

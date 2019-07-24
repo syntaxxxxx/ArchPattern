@@ -15,6 +15,7 @@ interface ImagesContract {
     }
 
     interface View {
+        fun checkSelfPermission() : Boolean
         fun openSettings()
         fun onShowPermissionDialog(isGallery: Boolean)
         fun takePhotosView(file: File?)
