@@ -19,5 +19,4 @@ interface RegisterRepository {
         images: MultipartBody.Part
     ): Call<ResponseRegister>
 
-    fun login (name: String, password: String) : Call<ResponseLogin>
 }
