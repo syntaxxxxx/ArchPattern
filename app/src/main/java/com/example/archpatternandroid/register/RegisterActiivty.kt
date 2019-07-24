@@ -16,12 +16,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
-import com.example.archpatternandroid.BuildConfig
 import com.example.archpatternandroid.R
 import com.example.archpatternandroid.images.ImagesContract
 import com.example.archpatternandroid.images.ImagesPresenter
 import com.example.archpatternandroid.login.LoginActivity
-import com.example.archpatternandroid.utils.MyFunction
+import com.example.archpatternandroid.utils.displayPhotosPreview
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -33,7 +32,6 @@ import org.jetbrains.anko.*
 import java.io.File
 import java.io.IOException
 import java.util.*
-
 
 class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContract.View, View.OnClickListener {
 
@@ -183,7 +181,7 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
         if (takePicture.resolveActivity(packageManager) != null) {
 
             if (file != null) {
-                val mPhotoURI = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", file)
+                val mPhotoURI = FileProvider.getUriForFile(this, "com.example.archpatternandroid.fileprovider", file)
                 takePicture.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI)
                 filePicture = file
                 startActivityForResult(takePicture, REQUEST_CAMERA)
@@ -227,8 +225,7 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
     }
 
     override fun onShowPhotosPreview(file: File) {
-        val myFunction = MyFunction()
-        myFunction.displayPhotosPreview(this, iv_profile, file)
+       displayPhotosPreview(this, iv_profile, file)
     }
 
     override fun onShowErrorDialog() {

@@ -10,8 +10,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
-class MyFunction {
-
     // images
     fun displayPhotosPreview(ctx: Context, iv: ImageView, file: File) {
         Glide.with(ctx).load(file)
@@ -62,4 +60,3 @@ class MyFunction {
         val requestBody = createRequestForImage(file)
         return MultipartBody.Part.createFormData("photo", file.getName(), requestBody)
     }
-}
