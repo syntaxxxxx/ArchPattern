@@ -15,12 +15,13 @@ interface ImagesContract {
     }
 
     interface View {
-        fun checkSelfPermission() : Boolean
-        fun onShowPermissionDialog(boolean: Boolean)
+        fun openSettings()
+        fun onShowPermissionDialog(isGallery: Boolean)
         fun takePhotosView(file: File?)
         fun selectPhotosView()
         fun onShowPhotosPreview(file: File)
         fun onShowDialogSelectedPhotos()
+        fun onShowErrorDialog()
         fun getRealPathFromUri(uri: Uri): String
         fun newFile(): File?
         fun getFilePath() : File?

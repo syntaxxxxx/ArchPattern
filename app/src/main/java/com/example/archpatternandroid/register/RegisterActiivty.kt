@@ -1,26 +1,33 @@
 package com.example.archpatternandroid.register
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.example.archpatternandroid.BuildConfig
 import com.example.archpatternandroid.R
 import com.example.archpatternandroid.images.ImagesContract
 import com.example.archpatternandroid.images.ImagesPresenter
+import com.example.archpatternandroid.login.LoginActivity
+import com.example.archpatternandroid.utils.MyFunction
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.activity_register_actiivty.*
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -39,11 +46,9 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
     var password: String = ""
     var level: String = ""
 
-    val allPermission = arrayOf<String>(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
     companion object {
         const val REQUEST_CAMERA = 0
-        const val REQUEST_GALLERY: Int = 1
+        const val REQUEST_GALLERY = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +64,7 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.iv_profile -> {
+                onShowDialogSelectedPhotos()
             }
             R.id.rb_admin -> {
                 level = "Admin"
@@ -69,6 +75,7 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
             R.id.btn_register -> {
             }
             R.id.tv_login -> {
+                startActivity<LoginActivity>()
             }
         }
     }
@@ -108,15 +115,54 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
         onDettachView()
     }
 
-    override fun checkSelfPermission(): Boolean {
-        for (permission in allPermission) {
-            val result = ActivityCompat.checkSelfPermission(this, permission)
-            if (result == PackageManager.PERMISSION_DENIED) return false
-        }
-        return true
+    override fun onShowPermissionDialog(isGallery: Boolean) {
+
+        Dexter.withActivity(this)
+            .withPermissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    if (report!!.areAllPermissionsGranted()) {
+                        if (isGallery) {
+                            imagesPresenter.selectPhotos()
+
+                        } else {
+                            imagesPresenter.takePhotos()
+                        }
+                    }
+                    if (report.isAnyPermissionPermanentlyDenied) {
+                        alert("coba allow permission nya ya") {
+                            yesButton {
+                                it.cancel()
+                                openSettings()
+                            }
+                            noButton {
+                                it.cancel()
+                            }
+                        }.show()
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token!!.continuePermissionRequest()
+                }
+
+            })
+            .withErrorListener { onShowErrorDialog() }
+            .onSameThread()
+            .check()
     }
 
-    override fun onShowPermissionDialog(boolean: Boolean) {
+    override fun openSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, 101)
     }
 
     override fun takePhotosView(file: File?) {
@@ -145,9 +191,34 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            try {
+                val file = Compressor(this).compressToFile(filePicture)
+                imagesPresenter.savePhotos(file.path)
+                imagesPresenter.showPreview(file)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+        } else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK) {
+            val uri = data?.getData()
+            try {
+                val file = Compressor(this).compressToFile(File(getRealPathFromUri(uri!!)))
+                imagesPresenter.savePhotos(file.path)
+                imagesPresenter.showPreview(file)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun onShowPhotosPreview(file: File) {
+        val myFunction = MyFunction()
+        myFunction.displayPhotosPreview(this, iv_profile, file)
+    }
+
+    override fun onShowErrorDialog() {
     }
 
     override fun onShowDialogSelectedPhotos() {

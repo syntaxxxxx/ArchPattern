@@ -57,5 +57,4 @@ dependencies {
 
     // add library easy permission multiple
     implementation 'com.karumi:dexter:5.0.0'
-
 }

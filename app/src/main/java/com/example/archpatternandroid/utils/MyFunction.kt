@@ -13,7 +13,7 @@ import java.io.File
 class MyFunction {
 
     // images
-    fun displayImagePreview(ctx: Context, iv: ImageView, file: File) {
+    fun displayPhotosPreview(ctx: Context, iv: ImageView, file: File) {
         Glide.with(ctx).load(file)
             .apply(RequestOptions().centerCrop().circleCrop()
             .placeholder(R.drawable.ic_launcher_background)).into(iv)
