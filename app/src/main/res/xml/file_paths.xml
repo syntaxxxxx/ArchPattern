@@ -4,5 +4,5 @@
 <paths>
     <external-path
             name="my_images"
-            path="Android/data/com.example.chatrealtimetracking/files/Pictures"/>
+            path="."/>
 </paths>
