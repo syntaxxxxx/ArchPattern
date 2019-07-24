@@ -20,6 +20,8 @@ import com.example.archpatternandroid.R
 import com.example.archpatternandroid.images.ImagesContract
 import com.example.archpatternandroid.images.ImagesPresenter
 import com.example.archpatternandroid.login.LoginActivity
+import com.example.archpatternandroid.networking.Injection
+import com.example.archpatternandroid.repository.RegisterRepositoryImpl
 import com.example.archpatternandroid.utils.displayPhotosPreview
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -83,7 +85,9 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
     }
 
     private fun initPresenter() {
-        presenter = RegisterPresenter()
+        val service = Injection.provideApiService()
+        val repository =  RegisterRepositoryImpl(service)
+        presenter = RegisterPresenter(repository)
         imagesPresenter = ImagesPresenter(this)
     }
 
@@ -208,6 +212,7 @@ class RegisterActiivty : AppCompatActivity(), ImagesContract.View, RegisterContr
                 val file = Compressor(this).compressToFile(filePicture)
                 imagesPresenter.savePhotos(file.path)
                 imagesPresenter.showPreview(file)
+                Log.d("TAG", file.toString())
             } catch (e: IOException) {
                 e.printStackTrace()
             }

@@ -2,7 +2,7 @@ package com.example.archpatternandroid.register
 
 import com.example.archpatternandroid.base.BasePresenter
 import com.example.archpatternandroid.entity.ResponseRegister
-import com.example.archpatternandroid.networking.Injection
+import com.example.archpatternandroid.repository.RegisterRepositoryImpl
 import com.example.archpatternandroid.utils.createMultipartBody
 import com.example.archpatternandroid.utils.createPartFromString
 import okhttp3.RequestBody
@@ -10,7 +10,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterPresenter(var regisView: RegisterContract.View? = null) : BasePresenter<RegisterContract.View>,
+class RegisterPresenter(val repo: RegisterRepositoryImpl, var regisView: RegisterContract.View? = null) :
+    BasePresenter<RegisterContract.View>,
     RegisterContract.Presenter {
 
     override fun onAttach(view: RegisterContract.View) {
@@ -30,7 +31,7 @@ class RegisterPresenter(var regisView: RegisterContract.View? = null) : BasePres
             val reqEmail: RequestBody = createPartFromString(email)
             val reqPass: RequestBody = createPartFromString(password)
             val reqLevel: RequestBody = createPartFromString(level)
-            Injection.provideApiService().regis(
+            repo.regis(
                 reqName,
                 reqEmail,
                 reqPass,
